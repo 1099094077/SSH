@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+                           http://www.springframework.org/schema/aop 
+                           http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+                           http://www.springframework.org/schema/context 
+                           http://www.springframework.org/schema/context/spring-context-2.5.xsd
+                           http://www.springframework.org/schema/tx 
+                           http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
+  
+  <context:component-scan base-package="com.zjj10990.ssh"></context:component-scan>
+<!-- 1 配置本地化代理工厂bean  这是spring整合hibenate的入口  加载hibernate.cfg.xml 创建sessionFactory对象-->
+  <bean id="sessionFactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+    <!-- 配置 hibernate.cfg.xml文件  classpath:表示从类路径下加载文件-->
+    <property name="configLocation">
+        <value>classpath:hibernate.cfg.xml</value>
+    </property>
+  </bean>
+  
+  <!-- 2 配置hibernage模板 -->
+  <bean id="hibernateTemplate" class="org.springframework.orm.hibernate3.HibernateTemplate">
+    <!-- 注入sessionFactory -->
+    <property name="sessionFactory" ref="sessionFactory"/>
+  </bean>
+  
+  
+  <!-- 3 配置hibernage的事务管理器 在aop术语中切面 -->
+  <bean id="txManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+     <property name="sessionFactory" ref="sessionFactory"/>
+  </bean>
+  
+  <tx:annotation-driven transaction-manager="txManager"/>
+  </beans>
